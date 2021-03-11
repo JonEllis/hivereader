@@ -1,2 +1,2 @@
-pyhiveapi
+pyhiveapi==0.3.4.4
 argparse
