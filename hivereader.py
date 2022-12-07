@@ -30,8 +30,6 @@ class HiveReader:
 
     def __init__(self, session_file='~/hive-session.json'):
         self.session_file = os.path.expanduser(session_file)
-
-        self.api = Hive.HiveApi()
         self.session = self.load_session()
 
         if self.requires_login():
@@ -39,7 +37,10 @@ class HiveReader:
 
         self.refresh_token()
 
-        response = self.api.getAllData(self.session['IdToken'])
+        self.api = Hive.API(token=self.session['IdToken'])
+
+        response = self.api.getAll()
+
         if 'parsed' not in response:
             raise HiveReaderException('No parsed data found')
 
@@ -76,7 +77,7 @@ class HiveReader:
         if not username or not password:
             raise HiveReaderException('Username and password are required for login')
 
-        auth = Hive.HiveAuth(username, password)
+        auth = Hive.Auth(username, password)
         login_response = auth.login()
 
         if login_response.get('ChallengeName') != Hive.SMS_REQUIRED:
